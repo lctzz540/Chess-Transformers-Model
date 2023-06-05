@@ -21,6 +21,13 @@ go run .
 
 ## Traning
 
+Traning on default:
+
+```bash
+python train.py
+
+```
+
 > usage: train.py [-h] [--batch-size N] [--epochs N] [--lr LR] [--device DEVICE]
 > ChessTransformer
 >
