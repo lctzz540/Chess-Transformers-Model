@@ -41,3 +41,4 @@ python train.py
 ## Traning weight
 
 Link to training weight: <https://drive.google.com/file/d/1-8IuqbKeMrO2tr3TWfrLsyDWbxJK8xYB/view?usp=sharing>
+![loss_graph](./loss_graph.png)
