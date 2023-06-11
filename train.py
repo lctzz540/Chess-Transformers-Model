@@ -1,10 +1,11 @@
 import torch
 from torch.utils.data import DataLoader
 from transformers import AdamW
-from torchsummary import summary
 from dataset import ChessDataset, collate_fn
 from network import ChessTransformer
 import argparse
+from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description="ChessTransformer")
 parser.add_argument(
@@ -60,8 +61,11 @@ best_loss = float("inf")
 epochs_without_improvement = 0
 patience = 3
 
-for epoch in range(args.epochs):
-    print(f"Epoch {epoch} started")
+loss_history = []
+
+for epoch in range(20):
+    print(f"Epoch {epoch+1}")
+    progress_bar = tqdm(total=len(dataloader))
     for batch in dataloader:
         input_ids, attention_mask = batch[0].to(device), batch[1].to(device)
 
@@ -75,6 +79,13 @@ for epoch in range(args.epochs):
         loss = torch.nn.CrossEntropyLoss()(logits, target_labels.view(-1))
         loss.backward()
         optimizer.step()
+        progress_bar.set_postfix(loss=loss.item())
+        progress_bar.update(1)
+        if progress_bar.n % progress_bar.total == 0:
+            progress_bar.refresh()
+
+    loss_history.append(loss.item())
+    progress_bar.close()
 
     if loss < best_loss:
         best_loss = loss
@@ -88,25 +99,9 @@ for epoch in range(args.epochs):
         break
     print(f"Epoch {epoch} is done")
 
-# Test inference
-test_input = ["e4", "d5", "exd5", "Nf6"]
-test_input_tokens = chess_transformer.tokenizer.tokenize(" ".join(test_input))
-test_input_ids = chess_transformer.tokenizer.convert_tokens_to_ids(test_input_tokens)
-test_input_ids = torch.tensor(test_input_ids).unsqueeze(0).to(device)
-test_attention_mask = torch.ones_like(test_input_ids).to(device)
-test_logits = chess_transformer((test_input_ids, test_attention_mask))
-predicted_next_move_id = torch.argmax(test_logits).item()
-predicted_next_move_token = chess_transformer.tokenizer.convert_ids_to_tokens(
-    predicted_next_move_id
-)
-
-print("Predicted next move:", predicted_next_move_token)
-
-summary(
-    chess_transformer,
-    input_size=[
-        (BATCH_SIZE, len(test_input_tokens)),
-        (BATCH_SIZE, len(test_input_tokens)),
-    ],
-    col_names=["Input IDs", "Attention Mask"],
-).save("model_summary.txt")
+plt.plot(loss_history)
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Loss over Epochs")
+plt.savefig("loss_graph.png")
+plt.show()
