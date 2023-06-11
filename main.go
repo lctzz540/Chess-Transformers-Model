@@ -62,7 +62,7 @@ func main() {
 
 	var wg sync.WaitGroup
 	targetMatches := 1000
-	threadCount := 200
+	threadCount := 100
 	count := 0
 	countMutex := sync.Mutex{}
 

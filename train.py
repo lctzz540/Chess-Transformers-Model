@@ -61,6 +61,7 @@ epochs_without_improvement = 0
 patience = 3
 
 for epoch in range(args.epochs):
+    print(f"Epoch {epoch} started")
     for batch in dataloader:
         input_ids, attention_mask = batch[0].to(device), batch[1].to(device)
 
@@ -85,12 +86,12 @@ for epoch in range(args.epochs):
             f"Early stopping triggered. No improvement in loss for {patience} epochs."
         )
         break
+    print(f"Epoch {epoch} is done")
 
 # Test inference
 test_input = ["e4", "d5", "exd5", "Nf6"]
 test_input_tokens = chess_transformer.tokenizer.tokenize(" ".join(test_input))
-test_input_ids = chess_transformer.tokenizer.convert_tokens_to_ids(
-    test_input_tokens)
+test_input_ids = chess_transformer.tokenizer.convert_tokens_to_ids(test_input_tokens)
 test_input_ids = torch.tensor(test_input_ids).unsqueeze(0).to(device)
 test_attention_mask = torch.ones_like(test_input_ids).to(device)
 test_logits = chess_transformer((test_input_ids, test_attention_mask))
