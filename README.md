@@ -19,7 +19,7 @@ go run .
 
 ```
 
-## Traning
+## Training
 
 Traning on default:
 
@@ -37,3 +37,7 @@ python train.py
 > --epochs N number of epochs to train (default: 14)
 > --lr LR learning rate (default: 1e-5)
 > --device DEVICE choose device
+
+## Traning weight
+
+Link to training weight: <https://drive.google.com/file/d/1-8IuqbKeMrO2tr3TWfrLsyDWbxJK8xYB/view?usp=sharing>
